@@ -1,29 +1,15 @@
-import Fastify from "fastify";
-import { User } from "./types/user.js";
-import type { CreateUserInput } from "./types/user.js";
+import express from "express";
+import { swaggerPlugin } from "./plugins/swagger.js";
+import userRoutes from "./routes/users.js";
 
 export function buildApp() {
-  const app = Fastify({
-    logger: true,
-  });
+  const app = express();
 
-  app.get("/", async () => {
-    return {
-      message: "User Service",
-    };
-  });
+  app.use(express.json());
 
-  app.post<{ Body: CreateUserInput }>("/users", async (request, reply) => {
-    const { email, password } = request.body;
+  swaggerPlugin(app);
 
-    return reply.status(201).send({
-      message: "User created",
-      data: {
-        email,
-        password,
-      },
-    });
-  });
+  app.use(userRoutes);
 
   return app;
 }

@@ -1,6 +1,4 @@
-type Role = "USER" | "ADMIN";
-
-export type PublicUser = Omit<User, "passwordHash">;
+export type Role = "USER" | "ADMIN";
 
 export interface User {
   id: string;
@@ -10,7 +8,14 @@ export interface User {
   createdAt: Date;
 }
 
+export type PublicUser = Omit<User, "passwordHash">;
+
 export interface CreateUserInput {
   email: string;
   password: string;
+}
+
+export interface CreateUserRecord {
+  email: string;
+  passwordHash: string;
 }
