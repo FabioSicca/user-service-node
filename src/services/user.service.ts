@@ -30,17 +30,13 @@ export class UserService {
     if (!user) {
       throw new NotFoundError("User not found");
     }
-    const isPasswordValid = await this.verifyPassword(input.password, user.passwordHash);
+    const isPasswordValid = await verifyPassword(input.password, user.passwordHash);
 
     if (!isPasswordValid) {
       throw new UnauthorizedError("Invalid password");
     }
 
     return toPublicUser(user);
-  }
-
-  private async verifyPassword(password: string, passwordHash: string): Promise<boolean> {
-    return await verifyPassword(password, passwordHash);
   }
 
 }

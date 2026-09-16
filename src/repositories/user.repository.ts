@@ -1,36 +1,35 @@
-import { randomUUID } from "node:crypto";
+import { eq } from "drizzle-orm";
+import { db } from "../db/index.js";
+import { users } from "../db/schema.js";
 import type { CreateUserRecord, User } from "../types/user.js";
 
-export interface UserRepository {
-  findByEmail(email: string): Promise<User | null>;
-  create(data: CreateUserRecord): Promise<User>;
-}
-
-export class InMemoryUserRepository implements UserRepository {
-  private readonly usersById = new Map<string, User>();
-  private readonly userIdsByEmail = new Map<string, string>();
-
+export class UserRepository {
   async findByEmail(email: string): Promise<User | null> {
-    const id = this.userIdsByEmail.get(email.toLowerCase());
-    if (!id) {
-      return null;
-    }
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email.toLowerCase()))
+      .limit(1);
 
-    return this.usersById.get(id) ?? null;
+    return user ? this.toUser(user) : null;
   }
 
   async create(data: CreateUserRecord): Promise<User> {
-    const user: User = {
-      id: randomUUID(),
-      email: data.email.toLowerCase(),
-      passwordHash: data.passwordHash,
-      role: "USER",
-      createdAt: new Date(),
+    const [user] = await db
+      .insert(users)
+      .values({
+        email: data.email.toLowerCase(),
+        passwordHash: data.passwordHash,
+      })
+      .returning();
+
+    return this.toUser(user);
+  }
+
+  private toUser(user: typeof users.$inferSelect): User {
+    return {
+      ...user,
+      role: user.role as User["role"],
     };
-
-    this.usersById.set(user.id, user);
-    this.userIdsByEmail.set(user.email, user.id);
-
-    return user;
   }
 }
