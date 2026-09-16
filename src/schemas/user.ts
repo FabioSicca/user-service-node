@@ -31,3 +31,15 @@ export const publicUserSchema = {
     createdAt: { type: "string", format: "date-time" },
   },
 } as const;
+
+
+export const loginUserBodySchema = {
+  $id: "LoginUserInput",
+  type: "object",
+  additionalProperties: false,
+  required: ["email", "password"],
+  properties: {
+    email: { type: "string", format: "email" },
+    password: { type: "string", minLength: 8, maxLength: 128, writeOnly: true },
+  },
+} as const;

@@ -19,3 +19,8 @@ export interface CreateUserRecord {
   email: string;
   passwordHash: string;
 }
+
+export interface LoginUserInput {
+  email: string;
+  password: string;
+}

@@ -4,3 +4,4 @@ export class UserAlreadyExistsError extends Error {
     this.name = "UserAlreadyExistsError";
   }
 }
+

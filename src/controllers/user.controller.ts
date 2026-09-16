@@ -3,14 +3,17 @@ import type { CreateUserInput } from "../types/user.js";
 import type { Request, Response } from "express";
 
 export class UserController {
-  constructor(private readonly userService: UserService) {}
-
-  async create(
-    request: Request<{ Body: CreateUserInput }>,
-    reply: Response,
-  ) {
-    const user = await this.userService.createUser(request.body as CreateUserInput);
-
-    return reply.status(201).json(user);
+    constructor(private readonly userService: UserService) {}
+  
+    async create(req: Request, res: Response) {
+      const user = await this.userService.createUser(req.body);
+  
+      return res.status(201).json(user);
+    }
+  
+    async login(req: Request, res: Response) {
+      const user = await this.userService.loginUser(req.body);
+  
+      return res.status(200).json(user);
+    }
   }
-}
