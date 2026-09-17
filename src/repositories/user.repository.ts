@@ -47,4 +47,8 @@ export class UserRepository {
 
     return user ? this.toUser(user) : null;
   }
+
+  async deleteById(id: string): Promise<void> {
+    await db.delete(users).where(eq(users.id, id));
+  }
 }

@@ -146,4 +146,26 @@ router.get("/users/email/:email", (req: Request<EmailParams>, res: Response) => 
  */
 router.get("/users/:id", (req: Request<UserParams>, res: Response) => userController.getById(req, res));
 
+/**
+ * @openapi
+ * /users/{id}:
+ *   delete:
+ *     summary: Delete a user by ID
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the user to delete
+ *     responses:
+ *       204:
+ *         description: User deleted successfully
+ *       404:
+ *         description: User not found
+ */
+router.delete("/users/:id", (req: Request<UserParams>, res: Response) => userController.deleteUserById(req, res));
+
 export default router;

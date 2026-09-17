@@ -44,4 +44,11 @@ export class UserController {
   
       return res.status(200).json(user);
     }
+
+    async deleteUserById(req: Request<UserParams>, res: Response) {
+      const { id } = req.params;
+      await this.userService.deleteUserById(id);
+  
+      return res.status(204).send();
+    }
 }

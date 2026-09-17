@@ -64,6 +64,16 @@ export class UserService {
     return this.toPublicUser(user);
   }
   
+  async deleteUserById(id: string): Promise<void> {
+    const user = await this.userRepository.findById(id);
+
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    await this.userRepository.deleteById(id);
+  }
+
   toPublicUser(user: User): PublicUser {
   return {
     id: user.id,
