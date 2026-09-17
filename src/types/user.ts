@@ -10,6 +10,11 @@ export interface User {
 
 export type PublicUser = Omit<User, "passwordHash">;
 
+export interface LoginResponse {
+  user: PublicUser;
+  token: string;
+}
+
 export interface CreateUserInput {
   email: string;
   password: string;

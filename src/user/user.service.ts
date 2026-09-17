@@ -4,9 +4,14 @@ import type { UserRepository } from "./user.repository.js";
 import type { CreateUserInput, PublicUser, LoginUserInput } from "../types/user.js";
 import { NotFoundError, UnauthorizedError } from "../errors/app.errors.js"
 import { User } from "../types/user.js";
+import { JwtService } from "../plugins/jwt.js";
+import type { LoginResponse } from "../types/user.js";
 
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async createUser(input: CreateUserInput): Promise<PublicUser> {
     const email = input.email.toLowerCase();
@@ -24,7 +29,7 @@ export class UserService {
     return this.toPublicUser(user);
   }
 
-  async loginUser(input: LoginUserInput): Promise<PublicUser> {
+  async loginUser(input: LoginUserInput): Promise<LoginResponse> {
     const user = await this.userRepository.findByEmail(input.email);
 
     if (!user) {
@@ -36,7 +41,10 @@ export class UserService {
       throw new UnauthorizedError("Invalid password");
     }
 
-    return this.toPublicUser(user);
+    return {
+      user: this.toPublicUser(user),
+      token: this.jwtService.sign({ userId: user.id, role: user.role }),
+    };
   }
 
   async getAllUsers(): Promise<PublicUser[]> {

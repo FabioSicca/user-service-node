@@ -5,10 +5,12 @@ import { UserController } from "../user/user.controller.js";
 import { UserService } from "../user/user.service.js";
 import { UserRepository } from "../user/user.repository.js";
 import {EmailParams, UserParams} from "../user/user.controller.js";
+import { JwtService } from "../plugins/jwt.js";
+import { authenticate, requireSelfOrAdmin } from "../plugins/authenticate.js";
 
 const router = Router();
 const userRepository = new UserRepository();
-const userService = new UserService(userRepository);
+const userService = new UserService(userRepository, new JwtService());
 const userController = new UserController(userService);
 
 /**
@@ -81,6 +83,8 @@ router.post("/users/login", (req: Request, res: Response) => userController.logi
  *     summary: Get all users
  *     tags:
  *       - Users
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Users found
@@ -91,7 +95,7 @@ router.post("/users/login", (req: Request, res: Response) => userController.logi
  *               items:
  *                 $ref: '#/components/schemas/PublicUser'
  */
-router.get("/users", (req: Request, res: Response) => userController.getAllUsers(req, res));
+router.get("/users", authenticate, (req: Request, res: Response) => userController.getAllUsers(req, res));
 
 /**
  * @openapi
@@ -100,6 +104,8 @@ router.get("/users", (req: Request, res: Response) => userController.getAllUsers
  *     summary: Get a user by email
  *     tags:
  *       - Users
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: email
@@ -118,7 +124,7 @@ router.get("/users", (req: Request, res: Response) => userController.getAllUsers
  *       404:
  *         description: User not found
  */
-router.get("/users/email/:email", (req: Request<EmailParams>, res: Response) => userController.getByEmail(req, res));
+router.get("/users/email/:email", authenticate, (req: Request<EmailParams>, res: Response) => userController.getByEmail(req, res));
 
 /**
  * @openapi
@@ -127,6 +133,8 @@ router.get("/users/email/:email", (req: Request<EmailParams>, res: Response) => 
  *     summary: Get a user by ID
  *     tags:
  *       - Users
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -144,7 +152,7 @@ router.get("/users/email/:email", (req: Request<EmailParams>, res: Response) => 
  *       404:
  *         description: User not found
  */
-router.get("/users/:id", (req: Request<UserParams>, res: Response) => userController.getById(req, res));
+router.get("/users/:id", authenticate, (req: Request<UserParams>, res: Response) => userController.getById(req, res));
 
 /**
  * @openapi
@@ -153,6 +161,8 @@ router.get("/users/:id", (req: Request<UserParams>, res: Response) => userContro
  *     summary: Delete a user by ID
  *     tags:
  *       - Users
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -166,6 +176,6 @@ router.get("/users/:id", (req: Request<UserParams>, res: Response) => userContro
  *       404:
  *         description: User not found
  */
-router.delete("/users/:id", (req: Request<UserParams>, res: Response) => userController.deleteUserById(req, res));
+router.delete<UserParams>("/users/:id", authenticate, requireSelfOrAdmin, (req: Request<UserParams>, res: Response) => userController.deleteUserById(req, res));
 
 export default router;

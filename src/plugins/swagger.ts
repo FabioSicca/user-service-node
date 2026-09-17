@@ -11,6 +11,13 @@ const swaggerSpec = swaggerJsDoc({
       version: "1.0.0",
     },
     components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
       schemas: {
         PublicUser: {
           type: "object",
