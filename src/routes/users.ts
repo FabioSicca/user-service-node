@@ -81,33 +81,33 @@ router.post("/users/login", (req: Request, res: Response) => userController.logi
  *     summary: Get all users
  *     tags:
  *       - Users
- *     parameters:
  *     responses:
  *       200:
- *         description: User found
+ *         description: Users found
  *         content:
  *           application/json:
  *             schema:
- *              $ref: '#/components/schemas/PublicUser'  
- *       404:
- *         description: User not found
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/PublicUser'
  */
 router.get("/users", (req: Request, res: Response) => userController.getAllUsers(req, res));
 
 /**
  * @openapi
- * /users/{id}:
+ * /users/email/{email}:
  *   get:
- *     summary: Get a user by ID
+ *     summary: Get a user by email
  *     tags:
  *       - Users
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: email
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the user to retrieve
+ *           format: email
+ *         description: The email of the user to retrieve
  *     responses:
  *       200:
  *         description: User found

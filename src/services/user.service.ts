@@ -41,7 +41,7 @@ export class UserService {
 
   async getAllUsers(): Promise<PublicUser[]> {
     const users = await this.userRepository.getAll();
-    return users.map(this.toPublicUser);
+    return users.map((user) => this.toPublicUser(user));
   }
 
   async getUserById(id: string): Promise<PublicUser> {
