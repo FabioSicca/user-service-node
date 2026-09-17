@@ -1,10 +1,10 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
 
-import { UserController } from "../controllers/user.controller.js";
-import { UserService } from "../services/user.service.js";
-import { UserRepository } from "../repositories/user.repository.js";
-import {EmailParams, UserParams} from "../controllers/user.controller.js";
+import { UserController } from "../user/user.controller.js";
+import { UserService } from "../user/user.service.js";
+import { UserRepository } from "../user/user.repository.js";
+import {EmailParams, UserParams} from "../user/user.controller.js";
 
 const router = Router();
 const userRepository = new UserRepository();

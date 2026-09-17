@@ -1,6 +1,6 @@
 import { UserAlreadyExistsError } from "../errors/user.errors.js";
 import { hashPassword, verifyPassword } from "../lib/password.js";
-import type { UserRepository } from "../repositories/user.repository.js";
+import type { UserRepository } from "./user.repository.js";
 import type { CreateUserInput, PublicUser, LoginUserInput } from "../types/user.js";
 import { NotFoundError, UnauthorizedError } from "../errors/app.errors.js"
 import { User } from "../types/user.js";

@@ -1,4 +1,4 @@
-import type { UserService } from "../services/user.service.js";
+import type { UserService } from "./user.service.js";
 import type { CreateUserInput } from "../types/user.js";
 import type { Request, Response } from "express";
 
