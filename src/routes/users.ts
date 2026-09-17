@@ -4,6 +4,7 @@ import type { Request, Response } from "express";
 import { UserController } from "../controllers/user.controller.js";
 import { UserService } from "../services/user.service.js";
 import { UserRepository } from "../repositories/user.repository.js";
+import {EmailParams, UserParams} from "../controllers/user.controller.js";
 
 const router = Router();
 const userRepository = new UserRepository();
@@ -72,5 +73,77 @@ router.post("/users", (req: Request, res: Response) => userController.create(req
  *       
  */
 router.post("/users/login", (req: Request, res: Response) => userController.login(req, res));
+
+/**
+ * @openapi
+ * /users:
+ *   get:
+ *     summary: Get all users
+ *     tags:
+ *       - Users
+ *     parameters:
+ *     responses:
+ *       200:
+ *         description: User found
+ *         content:
+ *           application/json:
+ *             schema:
+ *              $ref: '#/components/schemas/PublicUser'  
+ *       404:
+ *         description: User not found
+ */
+router.get("/users", (req: Request, res: Response) => userController.getAllUsers(req, res));
+
+/**
+ * @openapi
+ * /users/{id}:
+ *   get:
+ *     summary: Get a user by ID
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the user to retrieve
+ *     responses:
+ *       200:
+ *         description: User found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicUser'
+ *       404:
+ *         description: User not found
+ */
+router.get("/users/email/:email", (req: Request<EmailParams>, res: Response) => userController.getByEmail(req, res));
+
+/**
+ * @openapi
+ * /users/{id}:
+ *   get:
+ *     summary: Get a user by ID
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the user to retrieve
+ *     responses:
+ *       200:
+ *         description: User found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PublicUser'
+ *       404:
+ *         description: User not found
+ */
+router.get("/users/:id", (req: Request<UserParams>, res: Response) => userController.getById(req, res));
 
 export default router;

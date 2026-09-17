@@ -1,9 +1,9 @@
 import { UserAlreadyExistsError } from "../errors/user.errors.js";
 import { hashPassword, verifyPassword } from "../lib/password.js";
-import { toPublicUser } from "../mappers/user.mapper.js";
 import type { UserRepository } from "../repositories/user.repository.js";
 import type { CreateUserInput, PublicUser, LoginUserInput } from "../types/user.js";
 import { NotFoundError, UnauthorizedError } from "../errors/app.errors.js"
+import { User } from "../types/user.js";
 
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
@@ -21,7 +21,7 @@ export class UserService {
       passwordHash: await hashPassword(input.password),
     });
 
-    return toPublicUser(user);
+    return this.toPublicUser(user);
   }
 
   async loginUser(input: LoginUserInput): Promise<PublicUser> {
@@ -36,7 +36,40 @@ export class UserService {
       throw new UnauthorizedError("Invalid password");
     }
 
-    return toPublicUser(user);
+    return this.toPublicUser(user);
   }
 
+  async getAllUsers(): Promise<PublicUser[]> {
+    const users = await this.userRepository.getAll();
+    return users.map(this.toPublicUser);
+  }
+
+  async getUserById(id: string): Promise<PublicUser> {
+    const user = await this.userRepository.findById(id);
+
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    return this.toPublicUser(user);
+  }
+
+  async getUserByEmail(email: string): Promise<PublicUser> {
+    const user = await this.userRepository.findByEmail(email.toLowerCase());
+
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    return this.toPublicUser(user);
+  }
+  
+  toPublicUser(user: User): PublicUser {
+  return {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    createdAt: user.createdAt,
+    };
+  }
 }

@@ -10,10 +10,52 @@ const swaggerSpec = swaggerJsDoc({
       description: "User management and authentication API",
       version: "1.0.0",
     },
+    components: {
+      schemas: {
+        PublicUser: {
+          type: "object",
+          properties: {
+            id: {
+              type: "string",
+              format: "uuid",
+            },
+            email: {
+              type: "string",
+              format: "email",
+            },
+            role: {
+              type: "string",
+              enum: ["USER", "ADMIN"],
+            },
+            createdAt: {
+              type: "string",
+              format: "date-time",
+            },
+          },
+          required: ["id", "email", "role", "createdAt"],
+        },
+        CreateUser: {
+          type: "object",
+          properties: {
+            email: {
+              type: "string",
+              format: "email",
+            },
+            password: {
+              type: "string",
+              format: "password",
+            },
+            role: {
+              type: "string",
+              enum: ["USER", "ADMIN"],
+            },
+          },
+          required: ["email", "password"],
+        },
+      },
+    },
   },
-  apis: ["./src/routes/*.ts",
-        "./dist/routes/*.js",
-  ],
+  apis: ["./src/routes/*.ts", "./dist/routes/*.js"],
 });
 
 export function swaggerPlugin(app: Express) {

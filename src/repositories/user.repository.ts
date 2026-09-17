@@ -32,4 +32,19 @@ export class UserRepository {
       role: user.role as User["role"],
     };
   }
+
+  async getAll(): Promise<User[]> {
+    const usersList = await db.select().from(users);
+    return usersList.map((user) => this.toUser(user));
+  }
+
+  async findById(id: string): Promise<User | null> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
+
+    return user ? this.toUser(user) : null;
+  }
 }

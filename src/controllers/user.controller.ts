@@ -2,6 +2,14 @@ import type { UserService } from "../services/user.service.js";
 import type { CreateUserInput } from "../types/user.js";
 import type { Request, Response } from "express";
 
+export interface UserParams {
+  id: string;
+}
+
+export interface EmailParams {
+  email: string;
+}
+
 export class UserController {
     constructor(private readonly userService: UserService) {}
   
@@ -16,4 +24,24 @@ export class UserController {
   
       return res.status(200).json(user);
     }
-  }
+
+    async getAllUsers(req: Request, res: Response) {
+      const users = await this.userService.getAllUsers();
+  
+      return res.status(200).json(users);
+    }
+
+    async getById(req: Request<UserParams>, res: Response) {
+      const { id } = req.params;
+      const user = await this.userService.getUserById(id);
+  
+      return res.status(200).json(user);
+    }
+
+    async getByEmail(req: Request<EmailParams>, res: Response) {
+      const { email } = req.params;
+      const user = await this.userService.getUserByEmail(email);
+  
+      return res.status(200).json(user);
+    }
+}
