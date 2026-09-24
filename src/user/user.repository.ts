@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { users } from "../db/schema.js";
-import type { CreateUserRecord, User } from "../types/user.js";
+import type { CreateUserRecord, User, PublicUser } from "../types/user.js";
 
 export class UserRepository {
   async findByEmail(email: string): Promise<User | null> {
@@ -50,5 +50,14 @@ export class UserRepository {
 
   async deleteById(id: string): Promise<void> {
     await db.delete(users).where(eq(users.id, id));
+  }
+
+  toPublicUser(user: User): PublicUser {
+  return {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    createdAt: user.createdAt,
+    };
   }
 }

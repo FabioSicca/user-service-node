@@ -1,11 +1,9 @@
 import { UserAlreadyExistsError } from "../errors/user.errors.js";
-import { hashPassword, verifyPassword } from "../lib/password.js";
+import { hashPassword } from "../lib/password.js";
 import type { UserRepository } from "./user.repository.js";
 import type { CreateUserInput, PublicUser, LoginUserInput } from "../types/user.js";
-import { NotFoundError, UnauthorizedError } from "../errors/app.errors.js"
-import { User } from "../types/user.js";
+import { NotFoundError } from "../errors/app.errors.js"
 import { JwtService } from "../plugins/jwt.js";
-import type { LoginResponse } from "../types/user.js";
 
 export class UserService {
   constructor(
@@ -26,30 +24,12 @@ export class UserService {
       passwordHash: await hashPassword(input.password),
     });
 
-    return this.toPublicUser(user);
-  }
-
-  async loginUser(input: LoginUserInput): Promise<LoginResponse> {
-    const user = await this.userRepository.findByEmail(input.email);
-
-    if (!user) {
-      throw new NotFoundError("User not found");
-    }
-    const isPasswordValid = await verifyPassword(input.password, user.passwordHash);
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedError("Invalid password");
-    }
-
-    return {
-      user: this.toPublicUser(user),
-      token: this.jwtService.sign({ userId: user.id, role: user.role }),
-    };
+    return this.userRepository.toPublicUser(user);
   }
 
   async getAllUsers(): Promise<PublicUser[]> {
     const users = await this.userRepository.getAll();
-    return users.map((user) => this.toPublicUser(user));
+    return users.map((user) => this.userRepository.toPublicUser(user));
   }
 
   async getUserById(id: string): Promise<PublicUser> {
@@ -59,7 +39,7 @@ export class UserService {
       throw new NotFoundError("User not found");
     }
 
-    return this.toPublicUser(user);
+    return this.userRepository.toPublicUser(user);
   }
 
   async getUserByEmail(email: string): Promise<PublicUser> {
@@ -69,7 +49,7 @@ export class UserService {
       throw new NotFoundError("User not found");
     }
 
-    return this.toPublicUser(user);
+    return this.userRepository.toPublicUser(user);
   }
   
   async deleteUserById(id: string): Promise<void> {
@@ -80,14 +60,5 @@ export class UserService {
     }
 
     await this.userRepository.deleteById(id);
-  }
-
-  toPublicUser(user: User): PublicUser {
-  return {
-    id: user.id,
-    email: user.email,
-    role: user.role,
-    createdAt: user.createdAt,
-    };
   }
 }

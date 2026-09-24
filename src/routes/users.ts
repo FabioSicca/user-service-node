@@ -7,11 +7,15 @@ import { UserRepository } from "../user/user.repository.js";
 import {EmailParams, UserParams} from "../user/user.controller.js";
 import { JwtService } from "../plugins/jwt.js";
 import { authenticate, requireSelfOrAdmin } from "../plugins/authenticate.js";
+import { AuthService } from "../auth/auth.service.js";
+import { AuthController } from "../auth/auth.controller.js";
 
 const router = Router();
 const userRepository = new UserRepository();
 const userService = new UserService(userRepository, new JwtService());
 const userController = new UserController(userService);
+const authService = new AuthService(userRepository, new JwtService());
+const authController = new AuthController(authService);
 
 /**
  * @openapi
@@ -74,7 +78,7 @@ router.post("/users", (req: Request, res: Response) => userController.create(req
  *        description: User not found
  *       
  */
-router.post("/users/login", (req: Request, res: Response) => userController.login(req, res));
+router.post("/auth/login", (req: Request, res: Response) => authController.login(req, res));
 
 /**
  * @openapi
