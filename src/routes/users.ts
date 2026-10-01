@@ -7,15 +7,11 @@ import { UserRepository } from "../user/user.repository.js";
 import {EmailParams, UserParams} from "../user/user.controller.js";
 import { JwtService } from "../plugins/jwt.js";
 import { authenticate, requireSelfOrAdmin } from "../plugins/authenticate.js";
-import { AuthService } from "../auth/auth.service.js";
-import { AuthController } from "../auth/auth.controller.js";
 
 const router = Router();
 const userRepository = new UserRepository();
 const userService = new UserService(userRepository, new JwtService());
 const userController = new UserController(userService);
-const authService = new AuthService(userRepository, new JwtService());
-const authController = new AuthController(authService);
 
 /**
  * @openapi
@@ -45,40 +41,6 @@ const authController = new AuthController(authService);
  *         description: User created successfully
 */
 router.post("/users", (req: Request, res: Response) => userController.create(req, res));
-
-/** 
- * @openapi
- * /users/login:
- *   post:
- *     summary: Login a user
- *     tags:
- *       - Users
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *               password:
- *                 type: string
- *                 format: password
- *     responses:
- *       200:
- *         description: User logged in successfully
- *       401:
- *        description: Invalid credentials
- *       404:
- *        description: User not found
- *       
- */
-router.post("/auth/login", (req: Request, res: Response) => authController.login(req, res));
 
 /**
  * @openapi
