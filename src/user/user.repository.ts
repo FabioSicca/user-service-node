@@ -19,7 +19,7 @@ export class UserRepository {
       .insert(users)
       .values({
         email: data.email.toLowerCase(),
-        passwordHash: data.passwordHash,
+        passwordHash: data.passwordHash ?? null,
       })
       .returning();
 

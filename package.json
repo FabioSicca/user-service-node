@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/FabioSicca/user-service-node#readme",
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.5.0",
@@ -34,6 +35,8 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
+    "arctic": "^3.7.0",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "express": "^5.2.1",

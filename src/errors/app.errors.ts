@@ -23,3 +23,10 @@ export class UnauthorizedError extends AppError {
       this.name = "UnauthorizedError";
     }
 }
+
+export class BadRequestError extends AppError {
+    constructor(message = "Bad request") {
+      super(message, StatusCodes.BAD_REQUEST);
+      this.name = "BadRequestError";
+    }
+}

@@ -16,6 +16,11 @@ export class AuthService {
     if (!user) {
       throw new NotFoundError("User not found");
     }
+
+    if (!user.passwordHash) {
+      throw new UnauthorizedError("Password login is not available for this account");
+    }
+
     const isPasswordValid = await verifyPassword(input.password, user.passwordHash);
 
     if (!isPasswordValid) {

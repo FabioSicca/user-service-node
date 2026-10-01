@@ -9,7 +9,13 @@ export async function hashPassword(password: string): Promise<string> {
   return `${salt}:${derivedKey.toString("hex")}`;
 }
 
-export async function verifyPassword(password: string, passwordHash: string): Promise<boolean> {
+export async function verifyPassword(
+  password: string,
+  passwordHash: string | null,
+): Promise<boolean> {
+  if (!passwordHash) {
+    return false;
+  }
   const [salt, hash] = passwordHash.split(":");
   const derivedKey = (await scrypt(password, salt, 64)) as Buffer;
   return hash === derivedKey.toString("hex");
